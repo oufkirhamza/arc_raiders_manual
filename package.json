@@ -1,27 +1,35 @@
 {
-  "name": "arc_raiders",
+  "name": "arc-field-manual",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "validate": "tsx --tsconfig tsconfig.json scripts/validate-data.ts",
+    "import-data": "node scripts/import-data.mjs",
+    "check-links": "node scripts/check-links.mjs",
+    "check": "npm run typecheck && npm run lint && npm run validate"
   },
   "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "fuse.js": "^7.1.0",
+    "lucide-react": "^1.62.0",
+    "next": "^15.5.28",
+    "react": "19.2",
+    "react-dom": "19.2"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "15.5.4",
-    "@eslint/eslintrc": "^3"
+    "eslint-config-next": "^15.5.28",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.6",
+    "typescript": "^5"
   }
 }

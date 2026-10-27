@@ -1,0 +1,15 @@
+{
+  "source": "https://github.com/RaidTheory/arcraiders-data",
+  "license": "MIT",
+  "commit": "2a4abebb2486a633070f4e260058bcd5ad4511d6",
+  "committedAt": "2026-08-18T19:38:05-07:00",
+  "importedAt": "2026-10-27T21:05:32.206Z",
+  "counts": {
+    "items": 581,
+    "quests": 100,
+    "bots": 17,
+    "projects": 13,
+    "trades": 118,
+    "skills": 45
+  }
+}
