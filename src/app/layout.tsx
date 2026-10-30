@@ -55,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <nav aria-label="Footer" className="flex gap-4">
                   <Link href="/sources" className="hover:text-ink">Sources & methodology</Link>
                   <Link href="/updates" className="hover:text-ink">Updates</Link>
+                  <Link href="/contribute" className="hover:text-ink">Suggest a change</Link>
                 </nav>
               </div>
             </footer>

@@ -42,6 +42,41 @@ npm run validate     # re-runs the cheat-sheet cross-check and reference checks
 The import script only reads JSON and copies images; it never executes code from the checkout. Map overview
 images in `public/img/maps` were stitched once from the dataset's map tiles.
 
+## Community requests & back office
+
+Players can suggest changes at **`/contribute`** (linked from the sidebar, the footer, the items list and a
+"Suggest a correction" box on every item page, which pre-fills the item). Three request types:
+add a missing item, correct an existing item (which field, current value, proposed value), or report a problem.
+Each request gets a reference like `REQ-…`. Spam protection: hidden honeypot field and a limit of 5 requests per
+10 minutes per IP.
+
+The editor reviews them in the **back office at `/admin`**:
+
+* list with status tabs (Open, New, In review, Accepted, Done, Rejected, All), type filter and text search;
+* request page showing the proposed change next to the item's current data, a link to the item, a copyable summary,
+  status workflow with history, private notes, and delete (requires a confirmation tick);
+* CSV / JSON export of all requests.
+
+Setup — copy `.env.example` to `.env.local` and set:
+
+```bash
+ADMIN_PASSWORD=your-own-password
+ADMIN_SESSION_SECRET=a-random-string-of-at-least-32-characters
+```
+
+The back office is disabled until both are set. Sign-in uses a signed, HTTP-only, 12-hour session cookie; all
+`/admin` routes are protected by middleware and every admin action re-checks the session. Login attempts are
+rate-limited. In production the cookie requires HTTPS (set `ADMIN_ALLOW_HTTP=1` only for local testing of a
+production build).
+
+Requests are stored in `storage/requests.json` (override with `REQUESTS_DB_PATH`; ignored by git — back it up).
+This file store is meant for a single self-hosted server (`npm start`, a VPS, Docker with a volume). On serverless
+hosts such as Vercel the filesystem is not persistent: replace `src/lib/requests-store.ts` with a database
+(the rest of the code only uses its five functions).
+
+Accepting a request does not change the site automatically: make the edit (dataset re-import, `src/content/*`),
+rebuild, then mark the request **Done**.
+
 ## What's in it
 
 | Route | Content |

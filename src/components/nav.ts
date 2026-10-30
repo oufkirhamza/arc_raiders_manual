@@ -48,6 +48,7 @@ export const NAV: { group: string; items: NavItem[] }[] = [
       { href: "/guides", label: "Guides & Strategies", icon: "book" },
       { href: "/updates", label: "Updates", icon: "radio" },
       { href: "/sources", label: "Sources & Data", icon: "shield" },
+      { href: "/contribute", label: "Suggest a change", icon: "send" },
     ],
   },
 ];

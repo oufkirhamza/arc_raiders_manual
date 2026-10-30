@@ -1,5 +1,5 @@
 import {
-  BookOpen, Bot, Compass, Crosshair, Hammer, Home, Map, Package, Radio, Recycle, ScrollText, ShieldCheck, Users,
+  BookOpen, Bot, Compass, Crosshair, Hammer, Home, Map, Package, Radio, Recycle, ScrollText, Send, ShieldCheck, Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -17,6 +17,7 @@ const ICONS: Record<string, LucideIcon> = {
   book: BookOpen,
   radio: Radio,
   shield: ShieldCheck,
+  send: Send,
 };
 
 export function NavIcon({ name, className }: { name: string; className?: string }) {

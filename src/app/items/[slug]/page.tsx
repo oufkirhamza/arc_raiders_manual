@@ -310,6 +310,11 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
         </Section>
       )}
 
+      <aside className="panel mt-10 flex flex-col gap-3 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-ink-2">Something wrong or missing on this page?</p>
+        <Link href={`/contribute?type=correction&item=${item.slug}`} className="shrink-0 rounded border border-accent/60 px-3 py-1.5 text-accent hover:bg-accent/10">Suggest a correction</Link>
+      </aside>
+
       <SourcesFooter ids={pdfDonorInfo || keep || conflicts.length ? ["dataset", "pdf"] : ["dataset"]} updated={item.updatedAt} />
     </article>
   );

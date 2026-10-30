@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { ItemBrowser, type BrowserItem } from "@/components/ItemBrowser";
 import { Breadcrumbs, PageHeader } from "@/components/ui";
 import { ITEM_GROUPS, items, recycleRoi, usesOf, datasetMeta } from "@/lib/data";
@@ -35,7 +36,8 @@ export default function ItemsPage() {
         <p>
           {items.length} items from the community dataset (snapshot {datasetMeta.committedAt?.slice(0, 10)}). Items marked{" "}
           <span className="rounded border border-accent/40 px-1 font-mono text-[0.65rem] uppercase text-accent">Keep</span> are needed for a
-          workshop upgrade, quest or project.
+          workshop upgrade, quest or project. Missing something?{" "}
+          <Link className="link" href="/contribute?type=new_item">Request an item</Link>.
         </p>
       </PageHeader>
       <Suspense fallback={<p className="text-muted" role="status">Loading filters…</p>}>
