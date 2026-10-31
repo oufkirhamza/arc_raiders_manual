@@ -4,15 +4,18 @@ import type { Metadata } from "next";
 import {
   Breadcrumbs, Callout, ChipList, Coins, ConfidenceBadge, ItemChip, ItemImage, RarityBadge, Section, SourcesFooter, Stat,
 } from "@/components/ui";
-import { getItem, getWeaponFamily, stationName, weaponFamilies, TRADER_SLUGS, CURRENCIES } from "@/lib/data";
+import { stationName, TRADER_SLUGS, CURRENCIES } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pdfAttachments } from "@/content/pdf";
 import { pageMeta } from "@/lib/site";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { weaponFamilies } = await getData();
   return weaponFamilies.map((f) => ({ slug: f.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { getWeaponFamily } = await getData();
   const f = getWeaponFamily((await params).slug);
   if (!f) return {};
   return pageMeta({
@@ -27,6 +30,7 @@ const STAT_LABELS: Record<string, string> = { damage: "Damage", fireRate: "Fire 
 const SLOT_LABELS: Record<string, string> = { muzzle: "Muzzle", grip: "Underbarrel / grip", magazine: "Magazine", stock: "Stock", special: "Special", tech: "Tech" };
 
 export default async function WeaponPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { getItem, getWeaponFamily } = await getData();
   const f = getWeaponFamily((await params).slug);
   if (!f) notFound();
   const t1 = f.tiers[0];

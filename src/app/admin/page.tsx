@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AdminBar, StatusBadge } from "@/components/admin/AdminBar";
 import { ItemImage, cx } from "@/components/ui";
-import { getItem } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { REQUEST_KINDS, REQUEST_STATUSES, type RequestKind, type RequestStatus } from "@/lib/requests";
 import { listRequests } from "@/lib/requests-store";
 import { setStatus } from "./actions";
@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 type SP = { status?: string; kind?: string; q?: string; deleted?: string };
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<SP> }) {
+  const { getItem } = await getData();
   const sp = await searchParams;
   const all = await listRequests();
   const status = sp.status && (sp.status in REQUEST_STATUSES || sp.status === "all") ? sp.status : "open";

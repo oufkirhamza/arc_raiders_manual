@@ -6,20 +6,21 @@ import {
   Breadcrumbs, Callout, ChipList, Coins, ConfidenceBadge, EmptyState, ItemChip, ItemImage, RarityBadge, Section, SourcesFooter, Stat, cx,
 } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
-import {
-  CURRENCIES, TRADER_SLUGS, droppedBy, familyOfItem, getItem, getItemBySlug, items, questRewardsOf, recycleRoi, sourcesOf, stationName, sumValue,
-  tradesFor, usesOf,
-} from "@/lib/data";
+import { CURRENCIES, TRADER_SLUGS, droppedBy, questRewardsOf, stationName, tradesFor } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { conflictsFor } from "@/lib/crosscheck";
 import { pdfDonors, pdfKeepForQuests } from "@/content/pdf";
 import { pageMeta } from "@/lib/site";
 import type { Item } from "@/lib/types";
+import type { ItemData } from "@/lib/data";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { items } = await getData();
   return items.map((i) => ({ slug: i.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { getItemBySlug } = await getData();
   const item = getItemBySlug((await params).slug);
   if (!item) return {};
   const bits = [item.rarity, item.type, `sells for ${item.value.toLocaleString("en-US")} coins`];
@@ -31,16 +32,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-const fmtCost = (cost?: Record<string, number>) =>
+const fmtCost = (getItem: ItemData["getItem"], cost?: Record<string, number>) =>
   Object.entries(cost ?? {}).map(([k, v]) => `${v.toLocaleString("en-US")} ${CURRENCIES[k] ?? getItem(k)?.name ?? k}`).join(" + ");
 
-function recipeText(item: Item) {
+function recipeText(getItem: ItemData["getItem"], item: Item) {
   const lines = item.recipe?.map((r) => `${r.qty}x ${getItem(r.id)?.name ?? r.id}`) ?? [];
   const bench = item.craftBench?.filter((b) => b !== "in_raid").map(stationName).join(" / ");
   return `${item.name}${item.craftQuantity ? ` (x${item.craftQuantity})` : ""}: ${lines.join(", ")}${bench ? ` — ${bench}${item.stationLevel ? ` L${item.stationLevel}` : ""}` : ""}`;
 }
 
 export default async function ItemPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { familyOfItem, getItem, getItemBySlug, items, recycleRoi, sourcesOf, sumValue, usesOf } = await getData();
   const item = getItemBySlug((await params).slug);
   if (!item) notFound();
 
@@ -82,7 +84,8 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
             {item.blueprintLocked && <span className="rounded border border-line-2 px-1.5 py-0.5 font-mono text-[0.65rem] uppercase text-ink-2">Blueprint required</span>}
             {neededTotal > 0 && <span className="rounded border border-accent/50 px-1.5 py-0.5 font-mono text-[0.65rem] uppercase text-accent">Keep · needed in {neededTotal} {neededTotal === 1 ? "place" : "places"}</span>}
             {item.questItem && <span className="rounded border border-info/50 px-1.5 py-0.5 font-mono text-[0.65rem] uppercase text-info">Quest item</span>}
-            <ConfidenceBadge level={conflicts.length ? "conflict" : "dataset"} />
+            <ConfidenceBadge level={item.edited ? "editor" : conflicts.length ? "conflict" : "dataset"} />
+            {item.edited && <span className="text-xs text-muted">{item.edited.isNew ? "Added" : "Corrected"} by the editor on {item.edited.at.slice(0, 10)}</span>}
           </div>
           {item.description && <p className="mt-4 max-w-2xl text-ink-2">{item.description}</p>}
           {item.tip && <p className="mt-2 max-w-2xl text-sm text-muted">Tip: {item.tip}</p>}
@@ -117,7 +120,7 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
 
       <div className="grid gap-x-8 lg:grid-cols-2">
         {/* ---------- crafting ---------- */}
-        <Section id="crafting" title="Crafting" action={item.recipe?.length ? <CopyButton text={recipeText(item)} label="Copy recipe" /> : undefined}>
+        <Section id="crafting" title="Crafting" action={item.recipe?.length ? <CopyButton text={recipeText(getItem, item)} label="Copy recipe" /> : undefined}>
           {item.recipe?.length ? (
             <div className="panel p-4">
               <p className="mb-3 text-sm text-ink-2">
@@ -209,7 +212,7 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
                 <ul className="space-y-1.5 text-sm text-ink-2">
                   {item.vendors?.map((v, i) => (
                     <li key={`v${i}`}>
-                      <Link className="link" href={`/traders/${TRADER_SLUGS[v.trader] ?? ""}`}>{v.trader}</Link> — {fmtCost(v.cost)}
+                      <Link className="link" href={`/traders/${TRADER_SLUGS[v.trader] ?? ""}`}>{v.trader}</Link> — {fmtCost(getItem, v.cost)}
                       {v.limit ? ` · limit ${v.limit}${v.refreshSeconds ? ` per ${Math.round(v.refreshSeconds / 3600)}h` : ""}` : ""}
                       {v.requiredLevel ? ` · trader level ${v.requiredLevel}` : ""}
                     </li>
@@ -315,7 +318,7 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
         <Link href={`/contribute?type=correction&item=${item.slug}`} className="shrink-0 rounded border border-accent/60 px-3 py-1.5 text-accent hover:bg-accent/10">Suggest a correction</Link>
       </aside>
 
-      <SourcesFooter ids={pdfDonorInfo || keep || conflicts.length ? ["dataset", "pdf"] : ["dataset"]} updated={item.updatedAt} />
+      <SourcesFooter ids={pdfDonorInfo || keep || conflicts.length ? ["dataset", "pdf"] : ["dataset"]} updated={item.edited?.at.slice(0, 10) ?? item.updatedAt} />
     </article>
   );
 }

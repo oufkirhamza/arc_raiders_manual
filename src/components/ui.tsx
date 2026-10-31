@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { ChevronRight, Info, Lightbulb, TriangleAlert, ExternalLink } from "lucide-react";
 import type { Confidence, SourceRef } from "@/lib/types";
-import { CURRENCIES, getItem } from "@/lib/data";
+import { CURRENCIES } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { sources as SOURCES, type SourceId } from "@/content/sources";
 import { cx, ItemImage } from "./primitives";
 
@@ -29,6 +30,7 @@ const CONFIDENCE: Record<Confidence, { label: string; cls: string; help: string 
   dataset: { label: "Dataset", cls: "text-info border-info/40", help: "From the community-datamined dataset (RaidTheory)." },
   pdf: { label: "Cheat sheet", cls: "text-accent border-accent/40", help: "From the v3.4 community cheat sheet (in-game testing)." },
   community: { label: "Community", cls: "text-ink-2 border-line-2", help: "Reported by community guides or press; not independently verified here." },
+  editor: { label: "Editor-verified", cls: "text-accent border-accent/60 bg-accent/10", help: "Corrected or added by the site editor after review." },
   conflict: { label: "Conflict", cls: "text-bad border-bad/50", help: "Sources disagree. Both values are shown." },
   strategy: { label: "Strategy", cls: "text-r-epic border-r-epic/40", help: "Our recommendation, not a game fact." },
 };
@@ -126,8 +128,8 @@ export function Stat({ label, value, hint }: { label: string; value: React.React
 }
 
 // ---------- item references ----------
-export function ItemChip({ id, qty, note, href }: { id: string; qty?: number; note?: string; href?: string }) {
-  const item = getItem(id);
+export async function ItemChip({ id, qty, note, href }: { id: string; qty?: number; note?: string; href?: string }) {
+  const item = (await getData()).getItem(id);
   if (!item) {
     return (
       <span className="inline-flex items-center gap-2 rounded border border-line bg-bg-2 px-2 py-1.5 text-sm text-ink-2">

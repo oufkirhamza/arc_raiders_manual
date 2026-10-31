@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ItemBrowser, type BrowserItem } from "@/components/ItemBrowser";
 import { Breadcrumbs, PageHeader } from "@/components/ui";
-import { ITEM_GROUPS, items, recycleRoi, usesOf, datasetMeta } from "@/lib/data";
+import { ITEM_GROUPS, datasetMeta } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -11,7 +12,8 @@ export const metadata = pageMeta({
   path: "/items",
 });
 
-export default function ItemsPage() {
+export default async function ItemsPage() {
+  const { items, recycleRoi, usesOf } = await getData();
   const list: BrowserItem[] = items.map((i) => {
     const uses = usesOf(i.id);
     return {

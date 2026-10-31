@@ -3,7 +3,9 @@
  * Runs at build time; results power the /sources page and per-entity conflict notes.
  */
 import { pdfDonors, pdfExpeditions, pdfKeepForQuests, pdfKeysByMap, pdfValues, pdfWorkshop } from "@/content/pdf";
-import { getItem, getStation, projects, recycleRoi } from "./data";
+import { baseData, getStation, projects } from "./data";
+
+const { getItem, recycleRoi } = baseData;
 
 export interface CheckResult {
   area: "Expedition" | "Workshop" | "Value" | "Donor" | "Reference";

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs, Callout, Coins, ItemImage, PageHeader, RarityBadge, Section } from "@/components/ui";
-import { weaponFamilies, stationName } from "@/lib/data";
+import { stationName } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -9,7 +10,8 @@ export const metadata = pageMeta({
   path: "/weapons",
 });
 
-export default function WeaponsPage() {
+export default async function WeaponsPage() {
+  const { weaponFamilies } = await getData();
   const types = [...new Set(weaponFamilies.map((f) => f.type))];
   return (
     <>

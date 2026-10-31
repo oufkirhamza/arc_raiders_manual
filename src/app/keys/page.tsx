@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Breadcrumbs, Callout, ItemChip, PageHeader, RarityBadge, Section, SourcesFooter } from "@/components/ui";
 import { maps } from "@/content/world";
-import { items, keysForMap, rarityRank } from "@/lib/data";
+import { rarityRank } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -10,7 +11,8 @@ export const metadata = pageMeta({
   path: "/keys",
 });
 
-export default function KeysPage() {
+export default async function KeysPage() {
+  const { items, keysForMap } = await getData();
   const allKeys = items.filter((i) => i.type === "Key");
   const placed = new Set<string>();
   const groups = maps.map((m) => {

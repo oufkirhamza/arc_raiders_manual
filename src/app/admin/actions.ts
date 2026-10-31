@@ -3,15 +3,11 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { SESSION_COOKIE, SESSION_TTL_S, checkPassword, createSessionToken, verifySessionToken } from "@/lib/admin-auth";
+import { SESSION_COOKIE, SESSION_TTL_S, checkPassword, createSessionToken } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/admin-session";
 import { REQUEST_STATUSES, type RequestStatus } from "@/lib/requests";
 import { allowSubmission, deleteRequest, updateRequest } from "@/lib/requests-store";
 
-/** Defence in depth: middleware guards /admin pages, but every action re-checks the session. */
-async function requireAdmin() {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!(await verifySessionToken(token))) redirect("/admin/login");
-}
 
 export async function login(_prev: { error?: string }, form: FormData): Promise<{ error?: string }> {
   const h = await headers();

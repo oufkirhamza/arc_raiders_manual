@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs, Callout, Coins, ConfidenceBadge, ItemChip, Section, SourcesFooter, cx } from "@/components/ui";
 import { traders } from "@/content/world";
-import { CURRENCIES, getItem, questsOf, tradesBy, vendorItemsOf } from "@/lib/data";
+import { CURRENCIES, questsOf, tradesBy } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -24,6 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function TraderPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { getItem, vendorItemsOf } = await getData();
   const slug = (await params).slug;
   const t = traders.find((x) => x.slug === slug);
   if (!t) notFound();

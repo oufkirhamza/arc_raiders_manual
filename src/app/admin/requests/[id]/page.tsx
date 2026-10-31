@@ -5,7 +5,7 @@ import { ExternalLink } from "lucide-react";
 import { AdminBar, StatusBadge } from "@/components/admin/AdminBar";
 import { ItemImage, RarityBadge, Coins } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
-import { getItem } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { REQUEST_KINDS, REQUEST_STATUSES } from "@/lib/requests";
 import { getRequest } from "@/lib/requests-store";
 import { removeRequest, saveRequest } from "../../actions";
@@ -16,6 +16,7 @@ export const dynamic = "force-dynamic";
 const fmt = (iso: string) => iso.slice(0, 16).replace("T", " ") + " UTC";
 
 export default async function RequestPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; confirm?: string }> }) {
+  const { getItem } = await getData();
   const { id } = await params;
   const sp = await searchParams;
   const r = await getRequest(decodeURIComponent(id));
@@ -44,7 +45,13 @@ export default async function RequestPage({ params, searchParams }: { params: Pr
           <h1 className="font-display text-4xl font-bold uppercase tracking-wide">{item?.name ?? r.itemName ?? "General report"}</h1>
           <p className="mt-1 text-sm text-muted">Received {fmt(r.createdAt)} · updated {fmt(r.updatedAt)}</p>
         </div>
-        <div className="flex items-center gap-3"><StatusBadge status={r.status} label={REQUEST_STATUSES[r.status]} /><CopyButton text={summary} label="Copy summary" /></div>
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusBadge status={r.status} label={REQUEST_STATUSES[r.status]} />
+          <CopyButton text={summary} label="Copy summary" />
+          {r.kind === "correction" && r.itemId && <Link href={`/admin/items/${r.itemId}?request=${r.id}`} className="rounded bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink hover:brightness-110">Apply in item editor</Link>}
+          {r.kind === "new_item" && <Link href={`/admin/items/new?request=${r.id}`} className="rounded bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink hover:brightness-110">Create this item</Link>}
+          {r.kind === "report" && r.itemId && <Link href={`/admin/items/${r.itemId}?request=${r.id}`} className="rounded border border-line px-3 py-1.5 text-sm hover:border-accent/60">Open item editor</Link>}
+        </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
@@ -75,7 +82,7 @@ export default async function RequestPage({ params, searchParams }: { params: Pr
                 <p className="mt-1 flex flex-wrap items-center gap-3 text-sm text-ink-2">
                   <RarityBadge rarity={item.rarity} /> {item.type} · <Coins value={item.value} /> · {item.weightKg ?? "—"} kg · stack {item.stackSize ?? "—"}
                 </p>
-                <p className="mt-1 text-xs text-muted">Dataset id <code>{item.id}</code> · last updated {item.updatedAt ?? "—"}. Edit <code>src/data/generated/items.json</code> or <code>src/content/</code>, or fix upstream and re-import.</p>
+                <p className="mt-1 text-xs text-muted">Dataset id <code>{item.id}</code> · last updated {item.updatedAt ?? "—"}. Use “Apply in item editor” to publish a fix — no rebuild needed.</p>
               </div>
               <Link href={`/items/${item.slug}`} target="_blank" className="rounded border border-line px-3 py-1.5 text-sm hover:border-accent/60">Open item page</Link>
             </section>
@@ -84,7 +91,7 @@ export default async function RequestPage({ params, searchParams }: { params: Pr
           <section className="panel p-4" aria-labelledby="history-h">
             <h2 id="history-h" className="eyebrow mb-2">History</h2>
             <ol className="space-y-1 text-sm">
-              {r.history.map((h, i) => <li key={i} className="flex items-center gap-3"><span className="num text-xs text-muted">{fmt(h.at)}</span><StatusBadge status={h.status} label={REQUEST_STATUSES[h.status]} /></li>)}
+              {r.history.map((h, i) => <li key={i} className="flex items-center gap-3"><span className="num text-xs text-muted">{fmt(h.at)}</span><StatusBadge status={h.status} label={REQUEST_STATUSES[h.status]} />{h.note && <span className="text-xs text-ink-2">{h.note}</span>}</li>)}
             </ol>
           </section>
         </div>

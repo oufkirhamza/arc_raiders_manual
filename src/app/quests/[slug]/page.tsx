@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { Breadcrumbs, ChipList, ConfidenceBadge, Section, SourcesFooter } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
-import { getItem, getMap, getQuest, getQuestBySlug, mapSlugFor, quests, TRADER_SLUGS } from "@/lib/data";
+import { getMap, getQuest, getQuestBySlug, mapSlugFor, quests, TRADER_SLUGS } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -18,6 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function QuestPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { getItem } = await getData();
   const q = getQuestBySlug((await params).slug);
   if (!q) notFound();
   const prev = (q.previous ?? []).map(getQuest).filter(Boolean);

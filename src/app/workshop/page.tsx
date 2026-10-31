@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumbs, Callout, ChipList, Coins, PageHeader, Section, SourcesFooter } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
-import { getItem, items, sumValue, workshop } from "@/lib/data";
+import { workshop } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -21,7 +22,8 @@ const ICON: Record<string, string> = {
 };
 const ORDER = ["weapon_bench", "equipment_bench", "med_station", "refiner", "explosives_bench", "utility_bench", "scrappy", "workbench", "stash"];
 
-export default function WorkshopPage() {
+export default async function WorkshopPage() {
+  const { getItem, items, sumValue } = await getData();
   const stations = workshop.slice().sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
   const craftCount = (id: string) => items.filter((i) => i.craftBench?.includes(id)).length;
   return (

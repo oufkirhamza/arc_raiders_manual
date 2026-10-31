@@ -45,6 +45,10 @@ export interface Item {
   addedIn?: string;
   updatedAt?: string;
   image?: string;
+  /** set by the back office: hides a dataset item from the site */
+  hidden?: boolean;
+  /** present when the site editor changed or added this item */
+  edited?: { at: string; isNew?: boolean };
 }
 
 export interface Quest {
@@ -132,6 +136,7 @@ export type Confidence =
   | "pdf" // the v3.4 community cheat sheet only
   | "community" // community testing / guide sites
   | "conflict" // sources disagree
+  | "editor" // corrected or added by the site editor
   | "strategy"; // our recommendation, not a fact
 
 export interface SourceRef {

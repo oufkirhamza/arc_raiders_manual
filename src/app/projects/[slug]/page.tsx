@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs, Callout, ChipList, Coins, ConfidenceBadge, ItemChip, Section, SourcesFooter } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
-import { getItem, getProjectBySlug, projects, sumValue } from "@/lib/data";
+import { getProjectBySlug, projects } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { conflictsFor } from "@/lib/crosscheck";
 import { pdfExpeditions } from "@/content/pdf";
 import { pageMeta } from "@/lib/site";
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { getItem, sumValue } = await getData();
   const p = getProjectBySlug((await params).slug);
   if (!p) notFound();
   const conflicts = conflictsFor(`/projects/${p.slug}`);

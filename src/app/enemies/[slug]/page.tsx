@@ -3,7 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs, Callout, ChipList, ConfidenceBadge, Section, SourcesFooter, Stat, ThreatBadge } from "@/components/ui";
-import { bots, getBotBySlug, getMap, mapSlugFor, quests, usesOf } from "@/lib/data";
+import { bots, getBotBySlug, getMap, mapSlugFor, quests } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -30,6 +31,7 @@ const TACTICS: Record<string, string[]> = {
 };
 
 export default async function EnemyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { usesOf } = await getData();
   const b = getBotBySlug((await params).slug);
   if (!b) notFound();
   const mapList = [...new Set((b.maps ?? []).map(mapSlugFor).filter(Boolean) as string[])].map((s) => getMap(s)!);

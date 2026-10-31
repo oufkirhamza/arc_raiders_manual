@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
-import { bots, items, projects, quests, weaponFamilies, datasetMeta } from "@/lib/data";
+import { bots, projects, quests, datasetMeta } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { guides } from "@/content/guides";
 import { maps, traders } from "@/content/world";
 import { SITE } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { items, weaponFamilies } = await getData();
   const base = SITE.url.replace(/\/$/, "");
   const dataDate = datasetMeta.committedAt ? new Date(datasetMeta.committedAt) : undefined;
   const statics = ["", "/getting-started", "/items", "/weapons", "/attachments", "/enemies", "/traders", "/maps", "/keys", "/quests", "/workshop", "/projects", "/skills", "/recycling", "/guides", "/updates", "/sources"];

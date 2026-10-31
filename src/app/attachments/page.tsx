@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs, Callout, ChipList, ConfidenceBadge, PageHeader, Section, SourcesFooter } from "@/components/ui";
 import { pdfAttachments, pdfMagazines } from "@/content/pdf";
-import { getItem, getWeaponFamily, items } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -10,9 +10,10 @@ export const metadata = pageMeta({
   path: "/attachments",
 });
 
-const famName = (id: string) => getWeaponFamily(id.replace(/_/g, "-"))?.name ?? id;
 
-export default function AttachmentsPage() {
+export default async function AttachmentsPage() {
+  const { getItem, getWeaponFamily, items } = await getData();
+  const famName = (id: string) => getWeaponFamily(id.replace(/_/g, "-"))?.name ?? id;
   const mods = items.filter((i) => i.type === "Modification");
   return (
     <>

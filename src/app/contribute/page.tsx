@@ -1,6 +1,6 @@
 import { Breadcrumbs, PageHeader } from "@/components/ui";
 import { ContributeForm } from "@/components/ContributeForm";
-import { getItemBySlug, items } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { REQUEST_KINDS, type RequestKind } from "@/lib/requests";
 import { pageMeta } from "@/lib/site";
 
@@ -11,6 +11,7 @@ export const metadata = pageMeta({
 });
 
 export default async function ContributePage({ searchParams }: { searchParams: Promise<{ item?: string; type?: string }> }) {
+  const { getItemBySlug, items } = await getData();
   const sp = await searchParams;
   const it = sp.item ? getItemBySlug(sp.item) : undefined;
   const kind = sp.type && sp.type in REQUEST_KINDS ? (sp.type as RequestKind) : undefined;

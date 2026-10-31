@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { getItem } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { parseRequestForm, type FieldErrors } from "@/lib/requests";
 import { allowSubmission, createRequest } from "@/lib/requests-store";
 
@@ -27,6 +27,7 @@ export async function submitRequest(_prev: SubmitState, form: FormData): Promise
     return { message: "You have sent several requests in a short time. Please wait a few minutes and try again.", values: echo(form) };
   }
 
+  const { getItem } = await getData();
   const { data, errors } = parseRequestForm(form, (id) => Boolean(getItem(id)));
   if (!data) return { errors, message: "Please fix the highlighted fields.", values: echo(form) };
 

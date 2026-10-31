@@ -4,24 +4,27 @@ import { ArrowRight } from "lucide-react";
 import { ConfidenceBadge, ItemChip, Section, ThreatBadge } from "@/components/ui";
 import { GuideCard } from "@/components/GuideCard";
 import { NavIcon } from "@/components/icons";
-import { bots, items, quests, weaponFamilies, datasetMeta } from "@/lib/data";
+import { bots, quests, datasetMeta } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { guides } from "@/content/guides";
 import { maps, updates } from "@/content/world";
 import { crosscheckSummary } from "@/lib/crosscheck";
 
-const QUICK = [
-  { href: "/getting-started", icon: "compass", label: "Getting Started", note: "Core loop & first raid" },
-  { href: "/items", icon: "package", label: "Items", note: `${items.length} entries` },
-  { href: "/weapons", icon: "crosshair", label: "Weapons", note: `${weaponFamilies.length} families` },
-  { href: "/enemies", icon: "bot", label: "ARC Enemies", note: `${bots.length} machines` },
-  { href: "/maps", icon: "map", label: "Maps", note: `${maps.length} regions` },
-  { href: "/quests", icon: "scroll", label: "Quests", note: `${quests.length} quests` },
-  { href: "/workshop", icon: "hammer", label: "Workshop", note: "Upgrade costs" },
-  { href: "/recycling", icon: "recycle", label: "Recycle or Sell", note: "ROI for every item" },
-];
+
 const POPULAR = ["durable_cloth", "advanced_electrical_components", "raider_hatch_key", "wasp_driver", "leaper_pulse_unit", "arc_alloy", "mechanical_components", "exodus_modules"];
 
-export default function Home() {
+export default async function Home() {
+  const { items, weaponFamilies } = await getData();
+  const QUICK = [
+    { href: "/getting-started", icon: "compass", label: "Getting Started", note: "Core loop & first raid" },
+    { href: "/items", icon: "package", label: "Items", note: `${items.length} entries` },
+    { href: "/weapons", icon: "crosshair", label: "Weapons", note: `${weaponFamilies.length} families` },
+    { href: "/enemies", icon: "bot", label: "ARC Enemies", note: `${bots.length} machines` },
+    { href: "/maps", icon: "map", label: "Maps", note: `${maps.length} regions` },
+    { href: "/quests", icon: "scroll", label: "Quests", note: `${quests.length} quests` },
+    { href: "/workshop", icon: "hammer", label: "Workshop", note: "Upgrade costs" },
+    { href: "/recycling", icon: "recycle", label: "Recycle or Sell", note: "ROI for every item" },
+  ];
   const latest = updates[0];
   const recent = [...guides].sort((a, b) => b.updated.localeCompare(a.updated)).slice(0, 3);
   const featured = ["beginners-guide", "recycling-vs-selling", "attachments-explained"];

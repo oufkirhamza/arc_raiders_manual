@@ -8,6 +8,7 @@ export function AdminBar() {
       <div className="flex items-center gap-4">
         <span className="font-mono text-xs uppercase tracking-widest text-accent">Back office</span>
         <Link href="/admin" className="text-ink hover:text-accent">Requests</Link>
+        <Link href="/admin/items" className="text-ink hover:text-accent">Items</Link>
         <a href="/admin/export?format=csv" className="text-ink-2 hover:text-accent">Export CSV</a>
         <a href="/admin/export?format=json" className="text-ink-2 hover:text-accent">Export JSON</a>
       </div>

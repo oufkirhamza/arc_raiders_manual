@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Breadcrumbs, ConfidenceBadge, PageHeader, SourcesFooter } from "@/components/ui";
 import { traders } from "@/content/world";
-import { questsOf, tradesBy, vendorItemsOf } from "@/lib/data";
+import { questsOf, tradesBy } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -11,7 +12,8 @@ export const metadata = pageMeta({
   path: "/traders",
 });
 
-export default function TradersPage() {
+export default async function TradersPage() {
+  const { vendorItemsOf } = await getData();
   return (
     <>
       <Breadcrumbs trail={[{ label: "Characters & Traders" }]} />

@@ -69,13 +69,51 @@ The back office is disabled until both are set. Sign-in uses a signed, HTTP-only
 rate-limited. In production the cookie requires HTTPS (set `ADMIN_ALLOW_HTTP=1` only for local testing of a
 production build).
 
-Requests are stored in `storage/requests.json` (override with `REQUESTS_DB_PATH`; ignored by git — back it up).
-This file store is meant for a single self-hosted server (`npm start`, a VPS, Docker with a volume). On serverless
-hosts such as Vercel the filesystem is not persistent: replace `src/lib/requests-store.ts` with a database
-(the rest of the code only uses its five functions).
+### Editing items from the back office
 
-Accepting a request does not change the site automatically: make the edit (dataset re-import, `src/content/*`),
-rebuild, then mark the request **Done**.
+`/admin/items` lists every item. Open one to correct it, or use **New item** to add one the dataset lacks:
+name, description, type, rarity, sell value, weight, stack size, crafting recipe, recycles/salvages into
+(one `item_id x5` per line, ids are validated), loot areas, tip, **image upload** (PNG/JPEG/WebP, max 2 MB),
+and a "hide from site" switch. Fields that differ from the dataset are marked *changed* with the dataset value
+shown underneath; **Revert to dataset** undoes all your changes to an item.
+
+On a request page, **Apply in item editor** (corrections) or **Create this item** (new items) opens the editor
+pre-filled from the request; saving publishes the change and marks the request **Done**.
+
+Saving publishes immediately — **no file edits, no rebuild**. Edits are stored as a layer on top of the imported
+dataset (`src/lib/live-data.ts`): only changed fields are saved, so a future `npm run import-data` keeps your
+corrections. Public pages stay statically generated; saving invalidates the cached edits and Next.js
+regenerates the affected pages on their next visit. Edited items show an **Editor-verified** badge.
+
+### Storage: Supabase (production) or local files (development)
+
+With `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set, requests and item edits live in Supabase Postgres
+and images in Supabase Storage. Without them, everything is kept in `./storage` (git-ignored) — fine for local
+development, **not** for Vercel, whose filesystem is not persistent.
+
+#### One-time setup (free plan)
+
+1. Create a project at [supabase.com](https://supabase.com) (free plan).
+2. In the Supabase dashboard open **SQL Editor → New query**, paste [`supabase/schema.sql`](supabase/schema.sql)
+   and run it. It creates the `requests` and `item_edits` tables (Row Level Security on, no public access) and
+   the public `item-images` storage bucket (2 MB limit, PNG/JPEG/WebP only).
+3. In **Project Settings → API** copy the **Project URL** and the **secret / service_role key**.
+4. In Vercel → your project → **Settings → Environment Variables**, add:
+
+   | Name | Value |
+   |---|---|
+   | `SUPABASE_URL` | Project URL |
+   | `SUPABASE_SERVICE_ROLE_KEY` | secret / service_role key — server-side only, never expose it |
+   | `ADMIN_PASSWORD` | your back-office password |
+   | `ADMIN_SESSION_SECRET` | 32+ random characters |
+   | `NEXT_PUBLIC_SITE_URL` | your site URL, e.g. `https://your-site.vercel.app` |
+
+5. Redeploy. For local development against the same database, put the same values in `.env.local`
+   (or run `vercel env pull .env.local`).
+
+Free-plan notes: Supabase pauses free projects after a period of inactivity (unpause from the dashboard);
+the site build reads item edits, so a paused project makes deploys fail until it is resumed. Free storage is
+plenty for item icons (~20 KB each).
 
 ## What's in it
 

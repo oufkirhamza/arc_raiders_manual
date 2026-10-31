@@ -1,4 +1,4 @@
-import { bots, items, projects, quests, weaponFamilies, workshop } from "./data";
+import { bots, projects, quests, workshop, type ItemData } from "./data";
 import { guides } from "@/content/guides";
 import { maps, traders } from "@/content/world";
 
@@ -15,7 +15,7 @@ export interface SearchDoc {
 
 const clip = (s = "", n = 140) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 
-export function buildSearchIndex(): SearchDoc[] {
+export function buildSearchIndex({ items, weaponFamilies }: ItemData): SearchDoc[] {
   const docs: SearchDoc[] = [];
   for (const i of items)
     docs.push({ type: "Item", title: i.name, desc: clip(`${i.rarity} ${i.type}. ${i.description ?? ""}`), href: `/items/${i.slug}`, k: i.type, img: i.image });

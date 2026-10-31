@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/admin-auth";
 import { listRequests } from "@/lib/requests-store";
-import { getItem } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,7 @@ const csvCell = (v: unknown) => {
 export async function GET(req: Request) {
   if (!(await verifySessionToken((await cookies()).get(SESSION_COOKIE)?.value))) return new Response("Unauthorized", { status: 401 });
   const list = await listRequests();
+  const { getItem } = await getData();
   const format = new URL(req.url).searchParams.get("format");
   const stamp = new Date().toISOString().slice(0, 10);
 

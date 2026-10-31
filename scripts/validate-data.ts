@@ -2,11 +2,13 @@
  * Data validation: referential integrity of the imported dataset plus the PDF cross-check.
  * Run with `npm run validate`. Exits non-zero on broken references in curated content.
  */
-import { bots, getItem, isCurrency, items, projects, quests, trades, workshop, weaponFamilies } from "../src/lib/data";
+import { baseData, bots, isCurrency, projects, quests, trades, workshop } from "../src/lib/data";
 import { crosscheck, crosscheckSummary } from "../src/lib/crosscheck";
 import { guides } from "../src/content/guides";
 import { maps, traders } from "../src/content/world";
 import { sources } from "../src/content/sources";
+
+const { getItem, items, weaponFamilies } = baseData;
 
 const datasetIssues: string[] = [];
 const curatedIssues: string[] = [];

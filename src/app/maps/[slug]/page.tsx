@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Callout, ConfidenceBadge, ItemChip, Section, SourcesFooter, ThreatBadge } from "@/components/ui";
 import { maps } from "@/content/world";
 import { pdfKeysByMap } from "@/content/pdf";
-import { botsOnMap, getMap, keysForMap, questsOnMap } from "@/lib/data";
+import { botsOnMap, getMap, questsOnMap } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 import { Difficulty } from "@/components/Difficulty";
 
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function MapPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { keysForMap } = await getData();
   const m = getMap((await params).slug);
   if (!m) notFound();
   const pdf = pdfKeysByMap.find((k) => k.map === m.slug);

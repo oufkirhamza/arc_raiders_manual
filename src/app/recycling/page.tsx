@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 import { Breadcrumbs, Callout, ChipList, ItemChip, PageHeader, Section, SourcesFooter } from "@/components/ui";
 import { RecycleTable, type RecycleRow } from "@/components/RecycleTable";
-import { getItem, items, recycleRoi, sourcesOf, usesOf } from "@/lib/data";
+import { getData } from "@/lib/live-data";
 import { pdfDonors, pdfHighPriority, pdfKeepForQuests } from "@/content/pdf";
 import { pageMeta } from "@/lib/site";
 
@@ -12,7 +12,8 @@ export const metadata = pageMeta({
   path: "/recycling",
 });
 
-export default function RecyclingPage() {
+export default async function RecyclingPage() {
+  const { getItem, items, recycleRoi, sourcesOf, usesOf } = await getData();
   const rows: RecycleRow[] = items.flatMap((i) => {
     const r = recycleRoi(i);
     if (!r) return [];
