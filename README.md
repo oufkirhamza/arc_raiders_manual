@@ -85,6 +85,17 @@ dataset (`src/lib/live-data.ts`): only changed fields are saved, so a future `np
 corrections. Public pages stay statically generated; saving invalidates the cached edits and Next.js
 regenerates the affected pages on their next visit. Edited items show an **Editor-verified** badge.
 
+### Key locations on the map
+
+Key pages show a map with numbered pins and a close-up of each location; map pages and `/keys` show all pins together.
+Starting positions (22 pins on 21 items, in `src/content/key-locations.ts`) come from the v3.4 cheat sheet's keycard
+page: pins were detected by colour, matched to key cards by colour and number, and carried onto the site's map
+images by correlating the two renders. Keys without a known position say "Location not confirmed yet".
+
+To add or fix one, open the item in `/admin/items` and use **Map location**: click the map to add a pin, select a pin
+then click to move it, add a label, and save. Pins are stored as fractions of the map image, as an item edit, so they
+go live like any other change. Players can report one by choosing **Map location** under *Suggest a correction*.
+
 ### Storage: Supabase (production) or local files (development)
 
 With `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set, requests and item edits live in Supabase Postgres
@@ -187,6 +198,9 @@ Confidence labels: **Verified**, **Dataset**, **Cheat sheet**, **Community**, **
 * Attachment timings are frame-by-frame measurements the author marks as directional; inconsistent printed values are flagged.
 * Per-map extraction types come from a November 2025 guide.
 * 25 items have no image (a placeholder is shown).
+* Key pins mark the area of a door, not its exact spot, and date from March 2026. Riven Tides keys, the Dam Controlled
+  Access Zone key and Frozen Trail keys have no pin yet. One green "2" pin south of Ruined Homestead on the sheet's Blue
+  Gate map matches no key card, so it was left out.
 * `npm audit` reports advisories in Next's bundled PostCSS (build-time only); a fix requires a major Next upgrade.
 
 ## Legal

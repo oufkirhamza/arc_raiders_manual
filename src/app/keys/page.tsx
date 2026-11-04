@@ -3,6 +3,7 @@ import { Breadcrumbs, Callout, ItemChip, PageHeader, RarityBadge, Section, Sourc
 import { maps } from "@/content/world";
 import { rarityRank } from "@/lib/data";
 import { getData } from "@/lib/live-data";
+import { MapKeyPins } from "@/components/MapKeyPins";
 import { pageMeta } from "@/lib/site";
 
 export const metadata = pageMeta({
@@ -26,20 +27,22 @@ export default async function KeysPage() {
     <>
       <Breadcrumbs trail={[{ href: "/maps", label: "Maps & Locations" }, { label: "Keycards" }]} />
       <PageHeader eyebrow="Maps & Locations" title="Keycards">
-        <p>{allKeys.length} keys, security codes and keycards, grouped by the map they belong to. Rooms come from each key’s in-game description.</p>
+        <p>{allKeys.length} keys, security codes and keycards, grouped by the map they belong to. Rooms come from each key’s in-game description; map pins come from the v3.4 cheat sheet and the site editor.</p>
       </PageHeader>
       <Callout tone="tip">Keep keys in your safe pocket — keys in your backpack are lost if you die. The v3.4 cheat sheet links each key to a short video guide by u/toofumed.</Callout>
       {groups.filter((g) => g.keys.length).map(({ map, keys }) => (
         <Section key={map.slug} id={map.slug} title={map.name} action={<Link href={`/maps/${map.slug}#keys`} className="link text-sm">Map guide →</Link>}>
+          <MapKeyPins slug={map.slug} sizes="(min-width:1024px) 34rem, 100vw" />
           <div className="panel overflow-x-auto">
             <table className="table-arc">
-              <thead><tr><th scope="col">Key</th><th scope="col">Rarity</th><th scope="col">Opens</th></tr></thead>
+              <thead><tr><th scope="col">Key</th><th scope="col">Rarity</th><th scope="col">Opens</th><th scope="col">Location</th></tr></thead>
               <tbody>
                 {keys.map((k) => (
                   <tr key={k.id}>
                     <td className="min-w-56"><ItemChip id={k.id} /></td>
                     <td><RarityBadge rarity={k.rarity} /></td>
                     <td>{k.description}</td>
+                    <td className="whitespace-nowrap text-sm">{k.locations?.length ? <Link className="link" href={`/items/${k.slug}#location`}>On the map</Link> : <span className="text-muted">Not confirmed yet</span>}</td>
                   </tr>
                 ))}
               </tbody>

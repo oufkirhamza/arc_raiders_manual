@@ -40,7 +40,7 @@ export default async function AdminItemPage({ params, searchParams }: { params: 
       highlight = field;
       const numeric = field === "value" || field === "weightKg" || field === "stackSize";
       const n = request.proposedValue.replace(/[^\d.,]/g, "").replace(",", ".");
-      if (numeric ? n && Number.isFinite(Number(n)) : !["recipe", "recyclesInto", "salvagesInto", "image"].includes(field)) {
+      if (numeric ? n && Number.isFinite(Number(n)) : !["recipe", "recyclesInto", "salvagesInto", "image", "locations"].includes(field)) {
         initial[field] = numeric ? n : request.proposedValue;
       }
     }
@@ -97,6 +97,7 @@ export default async function AdminItemPage({ params, searchParams }: { params: 
         requestId={request?.id}
         highlight={highlight}
         isDatasetItem={!!base}
+        defaultMap={base ? baseData.mapOfItem(base)?.slug : undefined}
       />
     </>
   );

@@ -19,7 +19,7 @@ export type RequestStatus = keyof typeof REQUEST_STATUSES;
 export const CORRECTION_FIELDS = [
   "Name", "Description", "Rarity", "Type", "Sell value", "Weight", "Stack size",
   "Crafting recipe", "Recycles into", "Salvages into", "Where to find", "Used for (quests / upgrades)",
-  "Image", "Other",
+  "Image", "Map location", "Other",
 ] as const;
 
 export interface ContributionRequest {

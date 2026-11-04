@@ -9,6 +9,7 @@ import { botsOnMap, getMap, questsOnMap } from "@/lib/data";
 import { getData } from "@/lib/live-data";
 import { pageMeta } from "@/lib/site";
 import { Difficulty } from "@/components/Difficulty";
+import { MapKeyPins } from "@/components/MapKeyPins";
 
 export function generateStaticParams() {
   return maps.map((m) => ({ slug: m.slug }));
@@ -87,6 +88,7 @@ export default async function MapPage({ params }: { params: Promise<{ slug: stri
       </div>
 
       <Section id="keys" title="Keys & locked rooms">
+        <MapKeyPins slug={m.slug} />
         {keys.length ? (
           <ul className="grid gap-3 md:grid-cols-2">
             {keys.map((k) => (

@@ -6,6 +6,7 @@ import { baseData, bots, isCurrency, projects, quests, trades, workshop } from "
 import { crosscheck, crosscheckSummary } from "../src/lib/crosscheck";
 import { guides } from "../src/content/guides";
 import { maps, traders } from "../src/content/world";
+import { keyLocations } from "../src/content/key-locations";
 import { sources } from "../src/content/sources";
 
 const { getItem, items, weaponFamilies } = baseData;
@@ -37,9 +38,19 @@ for (const g of guides) {
 for (const m of maps) m.sources.forEach((s) => sourceIds.has(s) || curatedIssues.push(`map ${m.slug}: unknown source ${s}`));
 for (const t of traders) t.sources.forEach((s) => sourceIds.has(s) || curatedIssues.push(`trader ${t.slug}: unknown source ${s}`));
 
+for (const [id, pins] of Object.entries(keyLocations)) {
+  check(curatedIssues, id, "key location");
+  for (const p of pins) {
+    const img = maps.find((m) => m.slug === p.map)?.image?.[p.image ?? 0];
+    if (!img) curatedIssues.push(`key location ${id}: no image for map ${p.map}`);
+    if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1) curatedIssues.push(`key location ${id}: position out of range`);
+  }
+}
+
 const slugs = new Set<string>();
 for (const i of items) { if (slugs.has(i.slug)) curatedIssues.push(`duplicate item slug ${i.slug}`); slugs.add(i.slug); }
 
+console.log(`Key locations: ${Object.values(keyLocations).flat().length} pins on ${Object.keys(keyLocations).length} items`);
 console.log(`Items ${items.length} · quests ${quests.length} · ARC ${bots.length} · weapon families ${weaponFamilies.length}`);
 console.log(`Dataset reference issues: ${datasetIssues.length}`);
 datasetIssues.slice(0, 30).forEach((x) => console.log("  -", x));

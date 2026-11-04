@@ -91,6 +91,7 @@ export default function SourcesPage() {
           <li>Weapon damage/fire-rate numbers exist for only a few weapon tiers in the dataset, so they are not compared across weapons.</li>
           <li>Attachment timings come from frame-by-frame testing and are directional.</li>
           <li>Extraction details per map are from a November 2025 guide and may have changed.</li>
+          <li>Key map pins were read from the cheat sheet’s keycard page: they mark the area of a door and date from March 2026. Riven Tides, Frozen Trail and Dam Controlled Access Zone keys have no pin yet, and one unlabelled pin on the sheet’s Blue Gate map was left out.</li>
           <li>Item images are community upscales of in-game icons (© Embark Studios); 25 items have no image.</li>
         </ul>
       </Section>

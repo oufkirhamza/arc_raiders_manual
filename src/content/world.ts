@@ -6,7 +6,7 @@ export interface MapInfo {
   name: string;
   /** ids used by the dataset (bots use per-floor ids for Stella Montis; quests use "stella_montis") */
   datasetIds: string[];
-  image?: { src: string; alt: string }[];
+  image?: { src: string; alt: string; w: number; h: number; label?: string }[];
   difficulty?: number;
   unlock?: string;
   summary: string;
@@ -21,7 +21,7 @@ export const maps: MapInfo[] = [
     slug: "dam-battlegrounds",
     name: "Dam Battlegrounds",
     datasetIds: ["dam_battlegrounds"],
-    image: [{ src: "/img/maps/dam-battlegrounds.webp", alt: "Top-down overview of Dam Battlegrounds" }],
+    image: [{ src: "/img/maps/dam-battlegrounds.webp", alt: "Top-down overview of Dam Battlegrounds", w: 1600, h: 1600 }],
     difficulty: 2,
     unlock: "Available from the start",
     summary: "A waterlogged, toxic area around a former power plant (the Alcantara Power Plant, “The Dam”). The usual first map for new Raiders.",
@@ -32,7 +32,7 @@ export const maps: MapInfo[] = [
     slug: "buried-city",
     name: "Buried City",
     datasetIds: ["buried_city"],
-    image: [{ src: "/img/maps/buried-city.webp", alt: "Top-down overview of Buried City" }],
+    image: [{ src: "/img/maps/buried-city.webp", alt: "Top-down overview of Buried City", w: 1600, h: 1600 }],
     difficulty: 3,
     unlock: "8 rounds played",
     summary: "Sand-dune ruins of an Italian town with narrow streets and empty plazas — dense, close-quarters looting.",
@@ -44,7 +44,7 @@ export const maps: MapInfo[] = [
     slug: "the-spaceport",
     name: "The Spaceport",
     datasetIds: ["the_spaceport"],
-    image: [{ src: "/img/maps/the-spaceport.webp", alt: "Top-down overview of The Spaceport" }],
+    image: [{ src: "/img/maps/the-spaceport.webp", alt: "Top-down overview of The Spaceport", w: 1600, h: 1600 }],
     difficulty: 3,
     unlock: "12 rounds played",
     summary: "A former launch site for Exodus shuttles: hangars, launch towers and long sightlines across open ground.",
@@ -56,7 +56,7 @@ export const maps: MapInfo[] = [
     slug: "the-blue-gate",
     name: "The Blue Gate",
     datasetIds: ["the_blue_gate"],
-    image: [{ src: "/img/maps/the-blue-gate.webp", alt: "Top-down overview of The Blue Gate" }],
+    image: [{ src: "/img/maps/the-blue-gate.webp", alt: "Top-down overview of The Blue Gate", w: 1600, h: 1600 }],
     difficulty: 4,
     unlock: "18 rounds played",
     summary: "A gateway into the mountain ranges and a scarred valley, with tunnels, a village and scattered outposts.",
@@ -69,8 +69,8 @@ export const maps: MapInfo[] = [
     name: "Stella Montis",
     datasetIds: ["stella_montis", "stella_montis_upper", "stella_montis_lower"],
     image: [
-      { src: "/img/maps/stella-montis-upper.webp", alt: "Stella Montis upper level layout" },
-      { src: "/img/maps/stella-montis-lower.webp", alt: "Stella Montis lower level layout" },
+      { src: "/img/maps/stella-montis-upper.webp", alt: "Stella Montis upper level layout", w: 1600, h: 1200, label: "Upper level" },
+      { src: "/img/maps/stella-montis-lower.webp", alt: "Stella Montis lower level layout", w: 1600, h: 960, label: "Lower level" },
     ],
     difficulty: 4,
     unlock: "24 rounds played",
@@ -81,7 +81,7 @@ export const maps: MapInfo[] = [
     slug: "riven-tides",
     name: "Riven Tides",
     datasetIds: ["riven_tides"],
-    image: [{ src: "/img/maps/riven-tides.webp", alt: "Top-down overview of Riven Tides" }],
+    image: [{ src: "/img/maps/riven-tides.webp", alt: "Top-down overview of Riven Tides", w: 1600, h: 1600 }],
     difficulty: 5,
     unlock: "20 rounds played",
     added: "2026-04-28",

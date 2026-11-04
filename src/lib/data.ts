@@ -8,6 +8,7 @@ import skillsJson from "@/data/generated/skills.json";
 import mapEventsJson from "@/data/generated/map-events.json";
 import metaJson from "@/data/generated/meta.json";
 import { maps } from "@/content/world";
+import { keyLocations } from "@/content/key-locations";
 import { pdfKeepForQuests, pdfKeysByMap, pdfMagazines } from "@/content/pdf";
 import type { Bot, Item, Project, Qty, Quest, SkillNode, Trade, WorkshopStation } from "./types";
 
@@ -15,7 +16,7 @@ export const RARITIES = ["Common", "Uncommon", "Rare", "Epic", "Legendary"] as c
 export const THREATS = ["Low", "Moderate", "High", "Critical", "Extreme"] as const;
 
 /** The imported dataset, before editor changes. Pages should use `getData()` from live-data.ts. */
-export const baseItems = itemsJson as Item[];
+export const baseItems = (itemsJson as Item[]).map((i) => (keyLocations[i.id] ? { ...i, locations: keyLocations[i.id] } : i));
 export const quests = questsJson as Quest[];
 export const workshop = workshopJson as WorkshopStation[];
 export const projects = projectsJson as Project[];
@@ -130,6 +131,16 @@ export function buildItemData(items: Item[]) {
     );
   };
 
+  /** Every pinned location on a map, in stable order, numbered by the caller. */
+  const pinsForMap = (slug: string) =>
+    items.flatMap((item) => (item.locations ?? []).filter((pin) => pin.map === slug).map((pin) => ({ item, pin })));
+  /** The map a key belongs to, even when no door has been pinned yet. */
+  const mapOfItem = (item: Item) => {
+    const pinned = item.locations?.[0]?.map;
+    if (pinned) return getMap(pinned);
+    return item.type === "Key" ? maps.find((m) => keysForMap(m.slug).some((k) => k.id === item.id)) : undefined;
+  };
+
   const sumValue = (list?: Qty[]) => (list ?? []).reduce((s, r) => s + (getItem(r.id)?.value ?? 0) * r.qty, 0);
   /** Recycling Value Index (cheat-sheet formula). null when not recyclable or no sell value. */
   const recycleRoi = (item: Item) => {
@@ -156,7 +167,7 @@ export function buildItemData(items: Item[]) {
   const ITEM_TYPES = [...new Set(items.map((i) => i.type))].sort();
 
   return {
-    items, getItem, getItemBySlug, usesOf, sourcesOf, vendorItemsOf, keysForMap, sumValue, recycleRoi, isNeeded,
+    items, getItem, getItemBySlug, usesOf, sourcesOf, vendorItemsOf, keysForMap, pinsForMap, mapOfItem, sumValue, recycleRoi, isNeeded,
     weaponFamilies, getWeaponFamily, familyOfItem, ITEM_TYPES,
   };
 }

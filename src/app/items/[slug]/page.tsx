@@ -6,6 +6,7 @@ import {
   Breadcrumbs, Callout, ChipList, Coins, ConfidenceBadge, EmptyState, ItemChip, ItemImage, RarityBadge, Section, SourcesFooter, Stat, cx,
 } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
+import { ItemLocations } from "@/components/ItemLocations";
 import { CURRENCIES, TRADER_SLUGS, droppedBy, questRewardsOf, stationName, tradesFor } from "@/lib/data";
 import { getData } from "@/lib/live-data";
 import { conflictsFor } from "@/lib/crosscheck";
@@ -117,6 +118,8 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
           The v3.4 cheat sheet recommends keeping <strong>{keep.qty}×</strong> {item.name} for quests.
         </Callout>
       )}
+
+      <ItemLocations item={item} />
 
       <div className="grid gap-x-8 lg:grid-cols-2">
         {/* ---------- crafting ---------- */}

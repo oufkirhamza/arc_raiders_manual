@@ -7,7 +7,7 @@ import type { Item } from "./types";
 /** Fields the back office may change. Anything else in an edit is ignored. */
 export const EDITABLE_FIELDS = [
   "name", "description", "type", "rarity", "value", "weightKg", "stackSize", "foundIn",
-  "recipe", "recyclesInto", "salvagesInto", "craftBench", "stationLevel", "tip", "image", "hidden",
+  "recipe", "recyclesInto", "salvagesInto", "craftBench", "stationLevel", "tip", "image", "hidden", "locations",
 ] as const satisfies readonly (keyof Item)[];
 
 function pick(data: Partial<Item>) {

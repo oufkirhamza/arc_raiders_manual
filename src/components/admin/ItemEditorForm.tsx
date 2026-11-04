@@ -5,6 +5,7 @@ import { Save, Upload } from "lucide-react";
 import { saveItem, type EditorState } from "@/app/admin/items/actions";
 import { RARITY_OPTIONS, type EditorValues } from "@/lib/item-form";
 import { ItemImage, cx } from "../primitives";
+import { MapPinPicker } from "./MapPinPicker";
 import type { Rarity } from "@/lib/types";
 
 const input = "w-full rounded border border-line bg-bg-2 px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-accent/60 focus:outline-none aria-[invalid=true]:border-bad";
@@ -30,7 +31,7 @@ function Field({ name, label, hint, children, wide, ctx: { e, base, v, highlight
 }
 
 export function ItemEditorForm({
-  mode, initial, base, types, requestId, highlight, isDatasetItem,
+  mode, initial, base, types, requestId, highlight, isDatasetItem, defaultMap,
 }: {
   mode: "new" | "edit";
   initial: EditorValues;
@@ -40,6 +41,8 @@ export function ItemEditorForm({
   requestId?: string;
   highlight?: keyof EditorValues;
   isDatasetItem: boolean;
+  /** the map a key belongs to, used as the starting map for the pin picker */
+  defaultMap?: string;
 }) {
   const [state, action, pending] = useActionState<EditorState, FormData>(saveItem, {});
   const v = state.values ?? initial;
@@ -132,6 +135,13 @@ export function ItemEditorForm({
           )}
         </div>
       </section>
+
+      <details open={v.type === "Key" || v.locations !== "[]" || highlight === "locations"} className={cx("panel p-4", highlight === "locations" && "ring-2 ring-accent/60")}>
+        <summary className="eyebrow cursor-pointer">Map location{v.locations !== "[]" ? " · pinned" : ""}</summary>
+        <div className="mt-3">
+          <MapPinPicker name="locations" initial={v.locations} error={e.locations} defaultMap={defaultMap} />
+        </div>
+      </details>
 
       <section className="panel space-y-3 p-4">
         {isDatasetItem && (

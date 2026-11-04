@@ -13,6 +13,18 @@ export interface Vendor {
   requiredLevel?: number;
 }
 
+/** A point on a map image, as fractions (0–1) of its width and height. */
+export interface MapPin {
+  map: string;
+  /** index into the map's images, for maps with several levels */
+  image?: number;
+  x: number;
+  y: number;
+  label?: string;
+  /** "editor" when placed or changed in the back office; otherwise from the cheat sheet */
+  source?: "editor";
+}
+
 export interface Item {
   id: string;
   slug: string;
@@ -45,6 +57,8 @@ export interface Item {
   addedIn?: string;
   updatedAt?: string;
   image?: string;
+  /** where the item is used on the maps (keys and doors) */
+  locations?: MapPin[];
   /** set by the back office: hides a dataset item from the site */
   hidden?: boolean;
   /** present when the site editor changed or added this item */

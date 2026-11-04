@@ -8,7 +8,8 @@ import { getData, EDITABLE_FIELDS } from "@/lib/live-data";
 import { EDITS_TAG, deleteEdit, deleteItemImage, getEdit, saveEdit, uploadItemImage } from "@/lib/item-edits";
 import { RARITY_OPTIONS, parseQtyList, slugifyId, type EditorValues } from "@/lib/item-form";
 import { updateRequest } from "@/lib/requests-store";
-import type { Item, Rarity } from "@/lib/types";
+import { maps } from "@/content/world";
+import type { Item, MapPin, Rarity } from "@/lib/types";
 
 export interface EditorState {
   errors?: Partial<Record<keyof EditorValues | "imageFile", string>>;
@@ -20,6 +21,34 @@ const s = (form: FormData, k: string) => {
   const v = form.get(k);
   return typeof v === "string" ? v.replace(/\r\n/g, "\n").trim() : "";
 };
+/** Validates pins from the editor, rebuilding each one so only known fields are stored. */
+function parsePins(json: string): { pins?: MapPin[]; error?: string } {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(json || "[]");
+  } catch {
+    return { error: "The map pins could not be read." };
+  }
+  if (!Array.isArray(raw) || raw.length > 20) return { error: "An item can have at most 20 pins." };
+  const pins: MapPin[] = [];
+  for (const p of raw as Partial<MapPin>[]) {
+    const map = maps.find((m) => m.slug === p.map);
+    const image = p.image ?? 0;
+    const inRange = (n: unknown) => typeof n === "number" && n >= 0 && n <= 1;
+    if (!map?.image?.[image] || !inRange(p.x) || !inRange(p.y)) return { error: "One of the map pins is not on a known map." };
+    const label = typeof p.label === "string" ? p.label.trim().slice(0, 60) : "";
+    pins.push({
+      map: map.slug,
+      ...(p.image != null ? { image } : {}),
+      x: p.x as number,
+      y: p.y as number,
+      ...(label ? { label } : {}),
+      ...(p.source === "editor" ? { source: "editor" as const } : {}),
+    });
+  }
+  return { pins };
+}
+
 const isUploaded = (url?: string) => !!url && (url.includes("/storage/v1/object/public/") || url.startsWith("/local-uploads/"));
 
 /** Publishes changes: drops the cached edits and regenerates pages on their next visit. */
@@ -33,7 +62,7 @@ export async function saveItem(_prev: EditorState, form: FormData): Promise<Edit
   const mode = s(form, "mode") === "new" ? "new" : "edit";
   const live = await getData();
   const values = Object.fromEntries(
-    ["id", "name", "description", "type", "rarity", "value", "weightKg", "stackSize", "foundIn", "recipe", "recyclesInto", "salvagesInto", "tip", "image", "hidden"].map((k) => [k, s(form, k)]),
+    ["id", "name", "description", "type", "rarity", "value", "weightKg", "stackSize", "foundIn", "recipe", "recyclesInto", "salvagesInto", "tip", "image", "hidden", "locations"].map((k) => [k, s(form, k)]),
   ) as unknown as EditorValues;
   const errors: EditorState["errors"] = {};
 
@@ -74,6 +103,9 @@ export async function saveItem(_prev: EditorState, form: FormData): Promise<Edit
     else lists[k] = r.list?.length ? r.list : undefined;
   }
 
+  const { pins, error: pinError } = parsePins(values.locations);
+  if (pinError) errors.locations = pinError;
+
   // ----- image -----
   let image = values.image || undefined;
   const file = form.get("imageFile");
@@ -102,6 +134,7 @@ export async function saveItem(_prev: EditorState, form: FormData): Promise<Edit
     tip: values.tip || undefined,
     image,
     hidden: form.get("hidden") === "1" || undefined,
+    locations: pins?.length || base?.locations?.length ? pins : undefined,
   };
 
   let data: Partial<Item>;

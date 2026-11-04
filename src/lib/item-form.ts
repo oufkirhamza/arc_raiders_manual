@@ -17,6 +17,7 @@ export const REQUEST_FIELD_MAP: Record<string, keyof EditorValues> = {
   "Salvages into": "salvagesInto",
   "Where to find": "foundIn",
   Image: "image",
+  "Map location": "locations",
 };
 
 /** Form values as strings, exactly as shown in the inputs. */
@@ -36,6 +37,8 @@ export interface EditorValues {
   tip: string;
   image: string;
   hidden: string;
+  /** JSON array of MapPin */
+  locations: string;
 }
 
 export const qtyToText = (list?: Qty[]) => (list ?? []).map((r) => `${r.id} x${r.qty}`).join("\n");
@@ -57,6 +60,7 @@ export function itemToValues(item?: Partial<Item>): EditorValues {
     tip: item?.tip ?? "",
     image: item?.image ?? "",
     hidden: item?.hidden ? "1" : "",
+    locations: JSON.stringify(item?.locations ?? []),
   };
 }
 
