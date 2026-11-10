@@ -6,6 +6,7 @@ import { Header, Logo } from "@/components/site/Header";
 import { SideNav } from "@/components/site/SideNav";
 import { SITE } from "@/lib/site";
 import { datasetMeta } from "@/lib/data";
+import { Analytics } from "@vercel/analytics/next";
 
 const barlow = Barlow({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-barlow", display: "swap" });
 const barlowCondensed = Barlow_Condensed({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-barlow-condensed", display: "swap" });
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </footer>
           </div>
         </div>
+        <Analytics />
       </body>
     </html>
   );
